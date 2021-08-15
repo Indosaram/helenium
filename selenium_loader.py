@@ -7,14 +7,14 @@ from selenium.common.exceptions import WebDriverException
 
 
 class SeleniumLoader:
-    def __init__(self, driver_path=None):
+    def __init__(self, driver_path=None, user_options=None):
         self._get_driver_path()
         if driver_path is None:
             self.driver_path = os.path.join(os.getcwd(), self.driver_filename)
         else:
             self.driver_path = driver_path
 
-        self._init_driver()
+        self._init_driver(user_options)
         self._version_checker()
 
     def _get_driver_path(self):
@@ -36,17 +36,45 @@ class SeleniumLoader:
         self.zip_filename = zip_filename
         self.driver_filename = driver_filename
 
-    def _init_driver(self):
+    def _init_driver(self, user_options):
         options = webdriver.ChromeOptions()
-        options.add_argument("headless")
-        options.add_argument(
-            "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-            "AppleWebKit/537.36 (KHTML, like Gecko)"
-            "Chrome/78.0.3904.108 Safari/537.36"
-        )
-        options.add_argument("lang=ko_KR")
-        options.add_argument("log-level=3")
-        options.add_experimental_option("excludeSwitches", ["enable-logging"])
+
+        if user_options is None:
+            options.add_argument("headless")
+            options.add_argument(
+                "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                "AppleWebKit/537.36 (KHTML, like Gecko)"
+                "Chrome/78.0.3904.108 Safari/537.36"
+            )
+            options.add_argument("lang=ko_KR")
+            options.add_argument("log-level=3")
+            options.add_experimental_option(
+                "excludeSwitches", ["enable-logging"]
+            )
+        else:
+            if "headless" in user_options:
+                if user_options["headless"]:
+                    options.add_argument("headless")
+
+            if "header" in user_options:
+                options.add_argument(user_options["header"])
+            else:
+                options.add_argument(
+                    "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                    "AppleWebKit/537.36 (KHTML, like Gecko)"
+                    "Chrome/78.0.3904.108 Safari/537.36"
+                )
+
+            if "lang" in user_options:
+                options.add_argument(user_options["lang"])
+            else:
+                options.add_argument("lang=ko_KR")
+
+            options.add_argument("log-level=3")
+            options.add_experimental_option(
+                "excludeSwitches", ["enable-logging"]
+            )
+            options.add_argument('w3c=True')
         webdriverpath = os.path.join(self.driver_path)
 
         try:
