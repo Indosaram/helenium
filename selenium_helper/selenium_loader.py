@@ -7,13 +7,14 @@ from selenium.common.exceptions import WebDriverException
 
 
 class SeleniumLoader:
-    def __init__(self, driver_path=None, user_options=None):
+    def __init__(self, driver_path: str = None, user_options: dict = None):
         self._get_driver_path()
         if driver_path is None:
             self.driver_path = os.path.join(os.getcwd(), self.driver_filename)
         else:
             self.driver_path = driver_path
 
+        self.user_options = user_options
         self._init_driver(user_options)
         self._version_checker()
 
@@ -36,7 +37,7 @@ class SeleniumLoader:
         self.zip_filename = zip_filename
         self.driver_filename = driver_filename
 
-    def _init_driver(self, user_options):
+    def _init_driver(self, user_options: dict):
         options = webdriver.ChromeOptions()
 
         if user_options is None:
@@ -54,29 +55,11 @@ class SeleniumLoader:
                 "excludeSwitches", ["enable-logging"]
             )
         else:
-            if "headless" in user_options:
-                if user_options["headless"]:
-                    options.add_argument("headless")
+            for option in user_options["argument"]:
+                options.add_argument(option)
 
-            if "header" in user_options:
-                options.add_argument(user_options["header"])
-            else:
-                options.add_argument(
-                    "user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-                    "AppleWebKit/537.36 (KHTML, like Gecko)"
-                    "Chrome/78.0.3904.108 Safari/537.36"
-                )
-
-            if "lang" in user_options:
-                options.add_argument(user_options["lang"])
-            else:
-                options.add_argument("lang=ko_KR")
-
-            options.add_argument("log-level=3")
-            options.add_experimental_option(
-                "excludeSwitches", ["enable-logging"]
-            )
-            options.add_argument('w3c=True')
+            for key, val in user_options["experimental_option"].items():
+                options.add_experimental_option(key, val)
         webdriverpath = os.path.join(self.driver_path)
 
         try:
@@ -96,12 +79,18 @@ class SeleniumLoader:
         ].split(" ")[0][0:4]
         if chrome_version != driver_version:
             logging.warning(
-                "Chromedriver is outdated."
-                "Download latest version of the driver."
+                "Chromedriver is outdated. "
+                "Download latest version of the driver:"
+                "Chrome version: %(chrome_version)s, "
+                "Driver version: %(driver_version)s",
+                {
+                    "chrome_version": chrome_version,
+                    "driver_version": driver_version,
+                },
             )
 
             self._download_chromedriver()
-            self._init_driver()
+            self._init_driver(self.user_options)
 
     def _download_chromedriver(self):
         import stat
@@ -121,9 +110,9 @@ class SeleniumLoader:
             "https://chromedriver.storage.googleapis.com/"
             f"{latest_version}/{self.zip_filename}"
         )
-        with requests.get(chromedriver_url, stream=True) as r:
-            with open(self.zip_filename, 'wb') as f:
-                shutil.copyfileobj(r.raw, f)
+        with requests.get(chromedriver_url, stream=True) as res:
+            with open(self.zip_filename, 'wb+') as file:
+                shutil.copyfileobj(res.raw, file)
 
         with zipfile.ZipFile(self.zip_filename, "r") as file:
             file.extractall(os.getcwd())
