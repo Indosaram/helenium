@@ -1,20 +1,24 @@
 import os
 import platform
 import logging
+from typing import Optional
 
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 
 
 class SeleniumLoader:
-    def __init__(self, driver_path: str = None, user_options: dict = None):
+    def __init__(
+        self,
+        driver_path: Optional[str] = None,
+        user_options: Optional[webdriver.ChromeOptions] = None,
+    ):
         self._get_driver_path()
         if driver_path is None:
             self.driver_path = os.path.join(os.getcwd(), self.driver_filename)
         else:
             self.driver_path = driver_path
 
-        self.user_options = user_options
         self._init_driver(user_options)
         self._version_checker()
 
@@ -37,10 +41,10 @@ class SeleniumLoader:
         self.zip_filename = zip_filename
         self.driver_filename = driver_filename
 
-    def _init_driver(self, user_options: dict):
-        options = webdriver.ChromeOptions()
+    def _init_driver(self, options: Optional[webdriver.ChromeOptions] = None):
 
-        if user_options is None:
+        if options is None:
+            options = webdriver.ChromeOptions()
             options.add_argument("--headless")
             options.add_argument("--no-sandbox")
             options.add_argument("window-size=1920,1280")
@@ -54,14 +58,10 @@ class SeleniumLoader:
             options.add_experimental_option(
                 "excludeSwitches", ["enable-logging"]
             )
-        else:
-            for option in user_options["argument"]:
-                options.add_argument(option)
 
-            for key, val in user_options["experimental_option"].items():
-                options.add_experimental_option(key, val)
         webdriverpath = os.path.join(self.driver_path)
 
+        self.user_options = options
         try:
             self.driver = webdriver.Chrome(webdriverpath, options=options)
         except WebDriverException:
