@@ -1,6 +1,9 @@
+"""Helper module for downloading and initializing chromdriver."""
+
+
+import logging
 import os
 import platform
-import logging
 from typing import Optional
 
 from selenium import webdriver
@@ -8,6 +11,10 @@ from selenium.common.exceptions import WebDriverException
 
 
 class SeleniumLoader:
+    """
+    Helper class to donwload chromedriver automatically
+    """
+
     def __init__(
         self,
         driver_path: Optional[str] = None,
@@ -23,6 +30,9 @@ class SeleniumLoader:
         self._version_checker()
 
     def _get_driver_path(self):
+        """
+        Setup driver filename according to running os
+        """
         current_os = platform.system()
 
         driver_filename = "chromedriver"
@@ -42,10 +52,11 @@ class SeleniumLoader:
         self.driver_filename = driver_filename
 
     def _init_driver(self, options: Optional[webdriver.ChromeOptions] = None):
-
+        """
+        Initialize chromedriver with ChromeOptions.
+        """
         if options is None:
             options = webdriver.ChromeOptions()
-            options.add_argument("--headless")
             options.add_argument("--no-sandbox")
             options.add_argument("window-size=1920,1280")
             options.add_argument(
@@ -57,6 +68,19 @@ class SeleniumLoader:
             options.add_argument("log-level=3")
             options.add_experimental_option(
                 "excludeSwitches", ["enable-logging"]
+            )
+            options.add_experimental_option(
+                "prefs",
+                {
+                    "download.default_directory": os.path.join(
+                        os.getcwd(), "images"
+                    ),
+                    "download.prompt_for_download": False,
+                    'profile.default_content_setting_values.automatic_downloads': False,
+                    "download.directory_upgrade": True,
+                    "safebrowsing_for_trusted_sources_enabled": False,
+                    "safebrowsing.enabled": False,
+                },
             )
 
         webdriverpath = os.path.join(self.driver_path)
@@ -73,6 +97,9 @@ class SeleniumLoader:
             self.driver = webdriver.Chrome(webdriverpath, options=options)
 
     def _version_checker(self):
+        """
+        Parsing chrome and chromedriver version.
+        """
         chrome_version = self.driver.capabilities["browserVersion"][0:4]
         driver_version = self.driver.capabilities["chrome"][
             "chromedriverVersion"
@@ -93,9 +120,12 @@ class SeleniumLoader:
             self._init_driver(self.user_options)
 
     def _download_chromedriver(self):
+        """
+        Actual function that downloads chromedriver.
+        """
+        import shutil
         import stat
         import zipfile
-        import shutil
 
         import requests
 
