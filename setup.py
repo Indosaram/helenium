@@ -6,5 +6,5 @@ setup(
     description="Simple Selenium Load Helper Package",
     url="https://github.com/Indosaram/selenium_helper.git",
     packages=["selenium_helper"],
-    install_requires=["selenium==*", "requests==*"],
+    install_requires=["selenium>=4.3.0", "requests>=2.28.0"],
 )
