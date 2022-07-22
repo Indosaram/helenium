@@ -13,17 +13,21 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium_helper.selenium_loader import SeleniumLoader
 
 
-class SeleniumBase(SeleniumLoader):
+class SeleniumBase:
     """
     Base class for handy selenium usage.
     """
 
-    def __init__(
+    def __init__(self, driver: webdriver.Chrome = None):
+        if driver is not None:
+            self.driver = driver
+
+    def setup_driver(
         self,
         driver_path: Optional[str] = None,
         user_options: Optional[webdriver.ChromeOptions] = None,
     ):
-        super().__init__(driver_path, user_options)
+        self.driver = SeleniumLoader(driver_path, user_options).driver
 
     def click(self, xpath: str):
         """
@@ -94,7 +98,10 @@ class SeleniumBase(SeleniumLoader):
 
     def scroll_up(self, height: Optional[int] = None):
         """
-        Wrapper function for scrolling down the page. It will goes to the bottom
-        of the page by default.
+        Wrapper function for scrolling up the page. It will goes to the top of
+        the page by default.
         """
         self.driver.execute_script(f"window.scrollTo(0, {height});")
+
+    def __del__(self):
+        self.driver.close()

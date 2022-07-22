@@ -7,7 +7,8 @@ import platform
 from typing import Optional
 
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
+from selenium.common.exceptions import (SessionNotCreatedException,
+                                        WebDriverException)
 
 
 class SeleniumLoader:
@@ -88,11 +89,10 @@ class SeleniumLoader:
         self.user_options = options
         try:
             self.driver = webdriver.Chrome(webdriverpath, options=options)
-        except WebDriverException:
-            logging.warning(
-                "No chromedriver executable found. "
-                "Download latest version of the driver."
-            )
+            return
+        except (WebDriverException, SessionNotCreatedException) as exc:
+            logging.warning(exc)
+            logging.warning("Downloading the chromedriver...")
             self._download_chromedriver()
             self.driver = webdriver.Chrome(webdriverpath, options=options)
 
