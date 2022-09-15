@@ -2,7 +2,7 @@ import platform
 
 import pytest
 
-from selenium_helper.selenium_loader import SeleniumLoader
+from src.selenium_loader import SeleniumLoader
 
 
 @pytest.mark.parametrize(

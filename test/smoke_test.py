@@ -1,6 +1,6 @@
 import time
 
-from selenium_helper.base import SeleniumBase
+from src.base import SeleniumBase
 
 selenium_base = SeleniumBase()
 selenium_base.setup_driver()

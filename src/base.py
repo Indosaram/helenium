@@ -10,7 +10,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from selenium_helper.selenium_loader import SeleniumLoader
+from src.selenium_loader import SeleniumLoader
 
 
 class SeleniumBase:
