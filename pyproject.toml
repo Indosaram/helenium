@@ -5,7 +5,7 @@ url = "https://github.com/Indosaram/selenium_helper.git"
 requires-python = ">=3.8"
 
 [project.urls]
-"Homepage" = "https://github.com/Indosaram/selenium_helper.git",
+"Homepage" = "https://github.com/Indosaram/selenium_helper.git"
 
 [build-system]
 requires = ["setuptools", "wheel", "selenium>=4.3.0", "requests>=2.28.0"]
