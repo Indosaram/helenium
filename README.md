@@ -1,4 +1,4 @@
-# selenium_helper
+# helenium
 
 ## What is it?
 
@@ -9,7 +9,7 @@ It is very tedious to download chromedriver whenever your chrome browser get upd
 Use pip to install this package. It is not yet released in Pypi, but it is planned to do so when the version reached 1.0.0!
 
 ```bash
-pip install git+https://github.com/Indosaram/selenium_helper.git
+pip install git+https://github.com/Indosaram/helenium.git
 ```
 
 ## How to use it?
@@ -17,7 +17,7 @@ pip install git+https://github.com/Indosaram/selenium_helper.git
 You can import `SeleniumLoader` class if you just want to use chromedriver feature. And instantiating this will trigger setup chromdriver.
 
 ```python
-from selenium_helper import SeleniumLoader
+from helenium import SeleniumLoader
 
 
 SeleniumLoader()
@@ -28,7 +28,7 @@ If you want to use wrapper class,
 ```python
 import time
 
-from selenium_helper.base import SeleniumBase
+from helenium.base import SeleniumBase
 
 selenium_base = SeleniumBase()
 selenium_base.setup_driver() # Same as SeleniumLoader())
