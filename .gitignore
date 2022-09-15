@@ -2,6 +2,7 @@
 
 *egg*
 build/
+dist/
 .pytest_cache/
 
 chromedriver*
