@@ -9,7 +9,7 @@ It is very tedious to download chromedriver whenever your chrome browser get upd
 Use pip to install this package. It is not yet released in Pypi, but it is planned to do so when the version reached 1.0.0!
 
 ```bash
-pip install git+https://github.com/Indosaram/helenium.git
+pip install helenium
 ```
 
 ## How to use it?
